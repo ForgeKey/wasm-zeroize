@@ -207,7 +207,7 @@ mod tests {
 mod wasm_tests {
     use super::*;
     use wasm_bindgen_test::*;
-    
+
     // For browser testing:
     wasm_bindgen_test_configure!(run_in_browser);
 
