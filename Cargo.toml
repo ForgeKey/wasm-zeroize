@@ -1,6 +1,6 @@
 [package]
 name = "wasm-zeroize"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 description = "A WebAssembly module for secure sensitive data handling with automatic memory zeroization"
 license = "MIT"
@@ -13,12 +13,13 @@ categories = ["wasm", "web-programming", "cryptography"]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-wasm-bindgen = "0.2"
-zeroize = "1.5"
-console_error_panic_hook = "0.1"
+wasm-bindgen = "0.2.100"
+zeroize = "1.6.0"
+console_error_panic_hook = "0.1.7"
+web-sys = { version = "0.3.64", features = ["console"] }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3"
+wasm-bindgen-test = "0.3.37"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.

@@ -1,4 +1,4 @@
-name: CI
+name: CI, Build and Test
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_test:
-    name: Build and Test
+    name: Build, Lint and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,8 +21,15 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
 
       - name: Check formatting
         run: cargo fmt -- --check
@@ -30,11 +37,14 @@ jobs:
       - name: Clippy
         run: cargo clippy -- -D warnings
 
-      - name: Build
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build WASM package
         run: wasm-pack build --target web
 
-      - name: Test
-        run: wasm-pack test --node
+      - name: Run tests
+        run: cargo test --package wasm-zeroize --lib -- tests --show-output
 
   publish:
     name: Publish to npm

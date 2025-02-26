@@ -202,3 +202,60 @@ mod tests {
         assert_eq!(zstr.get_value(), "");
     }
 }
+
+#[cfg(all(test, target_arch = "wasm32"))]
+mod wasm_tests {
+    use super::*;
+    use wasm_bindgen_test::*;
+    
+    // For browser testing:
+    wasm_bindgen_test_configure!(run_in_browser);
+
+    #[wasm_bindgen_test]
+    fn test_new_zeroized_string() {
+        let secret = "sensitive-data";
+        let zstr = ZeroizedString::new(secret);
+        assert_eq!(zstr.get_value(), secret);
+    }
+
+    #[wasm_bindgen_test]
+    fn test_explicit_zeroize() {
+        let secret = "sensitive-data";
+        let zstr = ZeroizedString::new(secret);
+        zstr.zeroize();
+        assert_eq!(zstr.get_value(), "");
+    }
+
+    #[wasm_bindgen_test]
+    fn test_memory_isolation() {
+        let secret1 = "password123";
+        let secret2 = "different-password";
+        let zstr1 = ZeroizedString::new(secret1);
+        let zstr2 = ZeroizedString::new(secret2);
+        zstr1.zeroize();
+        assert_eq!(zstr1.get_value(), "");
+        assert_eq!(zstr2.get_value(), secret2);
+    }
+
+    #[wasm_bindgen_test]
+    fn test_unicode_content() {
+        // Test with Unicode characters
+        let unicode = "パスワード123!@#$%^&*()";
+        let zstr = ZeroizedString::new(unicode);
+        assert_eq!(zstr.get_value(), unicode);
+
+        zstr.zeroize();
+        assert_eq!(zstr.get_value(), "");
+    }
+
+    #[wasm_bindgen_test]
+    fn test_large_string() {
+        // Test with a smaller string for WASM environment
+        let large = "a".repeat(500);
+        let zstr = ZeroizedString::new(&large);
+        assert_eq!(zstr.get_value(), large);
+
+        zstr.zeroize();
+        assert_eq!(zstr.get_value(), "");
+    }
+}
