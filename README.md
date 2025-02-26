@@ -15,6 +15,8 @@ A WebAssembly module for secure sensitive data handling with automatic memory ze
 npm install wasm-zeroize
 # or
 yarn add wasm-zeroize
+# or
+pnpm add wasm-zeroize
 ```
 
 ## Usage
