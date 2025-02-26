@@ -132,69 +132,73 @@ impl Error for ModuleError {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use wasm_bindgen_test::*;
-
-    wasm_bindgen_test_configure!(run_in_browser);
-
-    #[wasm_bindgen_test]
+    
+    #[test]
     fn test_new_zeroized_string() {
         let secret = "sensitive-data";
         let zstr = ZeroizedString::new(secret);
-        
-        assert_eq!(zstr.get_value(), secret, "ZeroizedString should store the original value");
+        assert_eq!(zstr.get_value(), secret);
     }
 
-    #[wasm_bindgen_test]
+    #[test]
     fn test_explicit_zeroize() {
         let secret = "sensitive-data";
         let zstr = ZeroizedString::new(secret);
-        
-        // Explicitly zeroize
         zstr.zeroize();
-        
-        // Value should now be empty
-        assert_eq!(zstr.get_value(), "", "ZeroizedString should be empty after zeroize");
+        assert_eq!(zstr.get_value(), "");
     }
 
-    #[wasm_bindgen_test]
+    #[test]
     fn test_drop_zeroizes() {
-        // This test is more of a demonstration since we can't easily test drop behavior
-        // in a unit test, but we can verify the implementation
+        // This test is more of a demonstration
         let secret = "sensitive-data";
-        
-        // Create in a scope so it gets dropped
         {
             let _zstr = ZeroizedString::new(secret);
             // _zstr goes out of scope here and should be zeroized
         }
-        
-        // We can't directly test the memory contents after drop,
-        // but we can review the Drop implementation to ensure it calls zeroize
-    }
-
-    #[wasm_bindgen_test]
-    fn test_memory_isolation() {
-        let secret1 = "password123";
-        let secret2 = "different-password";
-        
-        let zstr1 = ZeroizedString::new(secret1);
-        let zstr2 = ZeroizedString::new(secret2);
-        
-        assert_eq!(zstr1.get_value(), secret1);
-        assert_eq!(zstr2.get_value(), secret2);
-        
-        // Zeroize one shouldn't affect the other
-        zstr1.zeroize();
-        assert_eq!(zstr1.get_value(), "");
-        assert_eq!(zstr2.get_value(), secret2, "Second string should remain unchanged");
     }
 
     #[test]
-    fn test_error_handling() {
-        // Example of how you might test error handling if you add methods that return Results
-        // For example, if you add a method that validates input:
+    fn test_memory_isolation() {
+        let secret1 = "password123";
+        let secret2 = "different-password";
+        let zstr1 = ZeroizedString::new(secret1);
+        let zstr2 = ZeroizedString::new(secret2);
+        zstr1.zeroize();
+        assert_eq!(zstr1.get_value(), "");
+        assert_eq!(zstr2.get_value(), secret2);
+    }
+
+    #[test]
+    fn test_empty_string() {
+        // Test with an empty string
+        let zstr = ZeroizedString::new("");
+        assert_eq!(zstr.get_value(), "");
         
-        // let result = validate_sensitive_data("");
-        // assert!(matches!(result, Err(ModuleError::InvalidInput(_))));
+        // Zeroizing an empty string should still work
+        zstr.zeroize();
+        assert_eq!(zstr.get_value(), "");
+    }
+
+    #[test]
+    fn test_unicode_content() {
+        // Test with Unicode characters
+        let unicode = "パスワード123!@#$%^&*()";
+        let zstr = ZeroizedString::new(unicode);
+        assert_eq!(zstr.get_value(), unicode);
+        
+        zstr.zeroize();
+        assert_eq!(zstr.get_value(), "");
+    }
+
+    #[test]
+    fn test_large_string() {
+        // Test with a larger string
+        let large = "a".repeat(10000);
+        let zstr = ZeroizedString::new(&large);
+        assert_eq!(zstr.get_value(), large);
+        
+        zstr.zeroize();
+        assert_eq!(zstr.get_value(), "");
     }
 }
