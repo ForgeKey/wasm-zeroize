@@ -1,7 +1,7 @@
 //! # wasm-zeroize
-//! 
+//!
 //! A WebAssembly module for secure sensitive data handling with automatic memory zeroization.
-//! 
+//!
 //! This library provides a secure container for sensitive string data that automatically
 //! clears memory when the container is dropped, helping to prevent sensitive information
 //! from being leaked through memory dumps or other side-channel attacks.
@@ -24,11 +24,11 @@
 //! assert_eq!(password.get_value(), "");
 //! ```
 
-use wasm_bindgen::prelude::*;
-use zeroize::Zeroize;
 use std::cell::RefCell;
 use std::error::Error;
 use std::fmt;
+use wasm_bindgen::prelude::*;
+use zeroize::Zeroize;
 
 // Initialize panic hook for better error messages
 #[wasm_bindgen(start)]
@@ -37,7 +37,7 @@ pub fn start() {
 }
 
 /// A secure string container that automatically zeroizes memory when dropped.
-/// 
+///
 /// This container is designed to hold sensitive information like passwords,
 /// encryption keys, or other secrets that should be cleared from memory
 /// as soon as they are no longer needed.
@@ -132,7 +132,7 @@ impl Error for ModuleError {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_new_zeroized_string() {
         let secret = "sensitive-data";
@@ -174,7 +174,7 @@ mod tests {
         // Test with an empty string
         let zstr = ZeroizedString::new("");
         assert_eq!(zstr.get_value(), "");
-        
+
         // Zeroizing an empty string should still work
         zstr.zeroize();
         assert_eq!(zstr.get_value(), "");
@@ -186,7 +186,7 @@ mod tests {
         let unicode = "パスワード123!@#$%^&*()";
         let zstr = ZeroizedString::new(unicode);
         assert_eq!(zstr.get_value(), unicode);
-        
+
         zstr.zeroize();
         assert_eq!(zstr.get_value(), "");
     }
@@ -197,7 +197,7 @@ mod tests {
         let large = "a".repeat(10000);
         let zstr = ZeroizedString::new(&large);
         assert_eq!(zstr.get_value(), large);
-        
+
         zstr.zeroize();
         assert_eq!(zstr.get_value(), "");
     }
