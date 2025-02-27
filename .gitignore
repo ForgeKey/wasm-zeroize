@@ -19,4 +19,11 @@ Thumbs.db
 
 # npm/node files (if using wasm-pack with npm)
 node_modules/
-package-lock.json 
+package-lock.json
+
+# New files from the code block
+Cargo.lock
+bin/
+pkg-web/
+pkg-node/
+wasm-pack.log 

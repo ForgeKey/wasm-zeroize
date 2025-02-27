@@ -1,0 +1,31 @@
+{
+  "name": "wasm-zeroize",
+  "version": "0.0.2",
+  "description": "A WebAssembly module for secure sensitive data handling with automatic memory zeroization",
+  "author": "Saeta <saetaeth@proton.me>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saetaeth/wasm-zeroize"
+  },
+  "files": [
+    "web/*.js",
+    "web/*.wasm",
+    "web/*.d.ts",
+    "node/*.js",
+    "node/*.wasm",
+    "node/*.d.ts",
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "index.js",
+  "types": "web/wasm_zeroize.d.ts",
+  "keywords": [
+    "wasm",
+    "security",
+    "zeroize",
+    "memory",
+    "nodejs"
+  ]
+} 
