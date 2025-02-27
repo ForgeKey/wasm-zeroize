@@ -1,6 +1,6 @@
 [package]
 name = "wasm-zeroize"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Saeta <saetaeth@proton.me>"]
 edition = "2021"
 description = "A WebAssembly module for secure sensitive data handling with automatic memory zeroization"
