@@ -24,18 +24,18 @@
 //! assert_eq!(password.get_value(), "");
 //! ```
 
+use log::{debug, info, trace};
 use std::cell::RefCell;
 use std::error::Error;
 use std::fmt;
 use wasm_bindgen::prelude::*;
 use zeroize::Zeroize;
-use log::{debug, info, trace};
 
 // Initialize panic hook and logger
 #[wasm_bindgen(start)]
 pub fn start() {
     console_error_panic_hook::set_once();
-    
+
     // Initialize the logger for WebAssembly
     #[cfg(target_arch = "wasm32")]
     {
