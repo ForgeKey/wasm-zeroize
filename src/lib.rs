@@ -29,11 +29,19 @@ use std::error::Error;
 use std::fmt;
 use wasm_bindgen::prelude::*;
 use zeroize::Zeroize;
+use log::{debug, info, trace};
 
-// Initialize panic hook for better error messages
+// Initialize panic hook and logger
 #[wasm_bindgen(start)]
 pub fn start() {
     console_error_panic_hook::set_once();
+    
+    // Initialize the logger for WebAssembly
+    #[cfg(target_arch = "wasm32")]
+    {
+        wasm_logger::init(wasm_logger::Config::default());
+        debug!("wasm-zeroize initialized");
+    }
 }
 
 /// A secure string container that automatically zeroizes memory when dropped.
@@ -59,6 +67,7 @@ impl ZeroizedString {
     /// ```
     #[wasm_bindgen(constructor)]
     pub fn new(data: &str) -> ZeroizedString {
+        debug!("Creating new ZeroizedString");
         ZeroizedString {
             inner: RefCell::new(data.to_string()),
         }
@@ -81,6 +90,7 @@ impl ZeroizedString {
     /// assert_eq!(value, "sensitive-data");
     /// ```
     pub fn get_value(&self) -> String {
+        trace!("Retrieving value from ZeroizedString");
         self.inner.borrow().clone()
     }
 
@@ -98,6 +108,7 @@ impl ZeroizedString {
     /// assert_eq!(secure_string.get_value(), "");
     /// ```
     pub fn zeroize(&self) {
+        info!("Explicitly zeroizing string data");
         let mut data = self.inner.borrow_mut();
         data.zeroize();
     }
@@ -105,6 +116,7 @@ impl ZeroizedString {
 
 impl Drop for ZeroizedString {
     fn drop(&mut self) {
+        debug!("ZeroizedString being dropped, zeroizing data");
         let mut data = self.inner.borrow_mut();
         data.zeroize();
     }
